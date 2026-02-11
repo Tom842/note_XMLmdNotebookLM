@@ -8,6 +8,13 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+
+*.xml
+last_entry_time.txt
+output-*.md
+split_articles/
+OLD/
+
 build/
 dist/
 develop-eggs/
