@@ -1,4 +1,4 @@
-# Gemini Json2md for NotebookLM - 内部モジュール説明
+# note XML to md for NotebookLM - 内部モジュール説明
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue)
 
 このドキュメントは、NoteからダウンロードされたXML形式の履歴データを、NotebookLM 向けのMarkdown形式に変換・整形・分割する処理を担う、主要な内部モジュールである `xml_to_markdown_converter.py` および `split_markdown_file.py` の機能について説明します。
