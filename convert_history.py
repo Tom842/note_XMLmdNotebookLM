@@ -30,7 +30,7 @@ def main() -> None:
     parser.add_argument(
         "--output_file",
         metavar="FILE",
-        type="str",
+        type=str,
         default="Notebook_Notes.md",
         help="Path to output Markdown file",
     )

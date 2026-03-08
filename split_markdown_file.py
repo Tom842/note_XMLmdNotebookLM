@@ -476,12 +476,8 @@ def split_and_save_markdown(
     if is_append_mode and os.path.exists(output_filename):
         current_file_size = os.path.getsize(output_filename)
 
-    header = "# Notebook Notes Archive
-
-"
-    header += f"Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-
-"
+    header = "# Notebook Notes Archive\n\n"
+    header += f"Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
 
     current_file_size += len(header.encode("utf-8"))
     

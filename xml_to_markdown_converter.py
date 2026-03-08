@@ -488,7 +488,7 @@ def decode_unicode_escapes(s: str) -> str:
     def repl(match):
         return chr(int(match.group(1), 16))
 
-    return re.sub(r"\u([0-9a-fA-F]{4})", repl, s)
+    return re.sub(r"\\u([0-9a-fA-F]{4})", repl, s)
 
 
 def html_to_markdown(html_str: str) -> str:
@@ -504,22 +504,15 @@ def html_to_markdown(html_str: str) -> str:
 
     # Replace major tags (h1-h6, li, p, div, br, b, strong) with Markdown-like symbols and line breaks
     # Headings (h1-h6) -> **Heading** + line break
-    text = re.sub(r"<h[1-6][^>]*>(.*?)</h[1-6]>", r"
-**\1**
-", text, flags=re.IGNORECASE)
+    text = re.sub(r"<h[1-6][^>]*>(.*?)</h[1-6]>", r"\n**\1**\n", text, flags=re.IGNORECASE)
 
     # List items (li) -> - + line break
-    text = re.sub(r"<li[^>]*>", r"
-- ", text, flags=re.IGNORECASE)
+    text = re.sub(r"<li[^>]*>", r"\n- ", text, flags=re.IGNORECASE)
 
     # Paragraphs (p), line breaks (div), line breaks (br) -> line breaks
-    text = re.sub(r"</p>", r"
-
-", text, flags=re.IGNORECASE)
-    text = re.sub(r"</div>", r"
-", text, flags=re.IGNORECASE)
-    text = re.sub(r"<br\s*/?>", r"
-", text, flags=re.IGNORECASE)
+    text = re.sub(r"</p>", r"\n\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"</div>", r"\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"<br\s*/?>", r"\n", text, flags=re.IGNORECASE)
 
     # Bold (b, strong) -> **text**
     text = re.sub(r"<(b|strong)[^>]*>(.*?)</\1>", r"**\2**", text, flags=re.IGNORECASE)
@@ -528,10 +521,7 @@ def html_to_markdown(html_str: str) -> str:
     text = re.sub(r"<[^>]+>", "", text)
 
     # Organize consecutive blank lines (reduce 3 or more line breaks to 2)
-    text = re.sub(r"
-{3,}", "
-
-", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
 
     return text.strip()
 
@@ -554,17 +544,13 @@ def extract_text_content(entry_element: ET.Element, last_entry_time_loaded: date
     except ValueError:
         formatted_date = time_str if time_str else "Unknown Date"
 
-    md_output = f"## {formatted_date}
-
-"
+    md_output = f"## {formatted_date}\n\n"
 
     # 1. Title
     title_element = entry_element.find("title")
     title = title_element.text if title_element is not None else ""
     if title:
-        md_output += f"**Title**: {title}
-
-"
+        md_output += f"**Title**: {title}\n\n"
 
     # 2. Content (from content:encoded, handling CDATA and HTML)
     content_encoded_element = entry_element.find("{http://purl.org/rss/1.0/modules/content/}encoded")
@@ -573,11 +559,7 @@ def extract_text_content(entry_element: ET.Element, last_entry_time_loaded: date
     if html_content:
         converted_text = html_to_markdown(html_content)
         if converted_text.strip():
-            md_output += f"{converted_text}
+            md_output += f"{converted_text}\n\n"
 
-"
-
-    md_output += "---
-
-"  # Separator
+    md_output += "---\n\n"  # Separator
     return dt, md_output
